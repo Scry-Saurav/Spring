@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ReservationService {
@@ -42,8 +43,9 @@ public class ReservationService {
         Iterable<Reservation> reservations = this.reservationRepository.findByDate(new java.sql.Date(date.getTime()));
         if(null!=reservations){
             reservations.forEach(reservation -> {
-                Guest guest = this.guestRepository.findOne(reservation.getGuestId());
-                if(null!=guest){
+                Optional<Guest> guestOptional = this.guestRepository.findById(reservation.getGuestId());
+                if(null!=guestOptional){
+                    Guest guest = guestOptional.get();
                     RoomReservation roomReservation = roomReservationMap.get(reservation.getId());
                     roomReservation.setDate(date);
                     roomReservation.setFirstName(guest.getFirstName());
